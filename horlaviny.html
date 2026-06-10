@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hořlaviny – 8. třída</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --fire: #E94560;
+    --ember: #F5A623;
+    --dark: #0D0D1A;
+    --mid: #141428;
+    --surface: #1C1C35;
+    --card: #222240;
+    --text: #F0EEF8;
+    --muted: #8A879E;
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --blue: #3498DB;
+    --yellow: #F39C12;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(233,69,96,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(245,166,35,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .fire-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(233,69,96,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(233,69,96,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .particles {
+    position: absolute; inset: 0; pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--ember);
+    opacity: 0;
+    animation: rise var(--dur) var(--delay) infinite;
+  }
+  @keyframes rise {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    20% { opacity: 0.7; }
+    80% { opacity: 0.3; }
+    100% { transform: translateY(-120vh) translateX(var(--drift)); opacity: 0; }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(233,69,96,0.15);
+    border: 1px solid rgba(233,69,96,0.4);
+    color: var(--fire);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s 0.1s both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 16vw, 14rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    animation: fadeUp 0.8s 0.2s both;
+    position: relative;
+  }
+  .hero-title span {
+    display: block;
+    color: var(--fire);
+    -webkit-text-stroke: 2px var(--fire);
+    color: transparent;
+  }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.7;
+    animation: fadeUp 0.8s 0.35s both;
+  }
+
+  .hero-pills {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    margin-top: 2.5rem;
+    animation: fadeUp 0.8s 0.5s both;
+  }
+  .hero-pill {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 8px 18px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.25s;
+    letter-spacing: 0.05em;
+  }
+  .hero-pill:hover {
+    background: var(--fire);
+    border-color: var(--fire);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeUp 0.8s 0.8s both;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--fire), transparent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--fire);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .section-desc {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 3rem;
+  }
+
+  /* ── DEFINITION ── */
+  .def-card {
+    background: var(--surface);
+    border: 1px solid rgba(233,69,96,0.2);
+    border-left: 4px solid var(--fire);
+    padding: 2rem 2.5rem;
+    border-radius: 0 12px 12px 0;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    position: relative;
+    overflow: hidden;
+  }
+  .def-card::before {
+    content: '"';
+    position: absolute; top: -0.5rem; left: 1rem;
+    font-family: 'Bebas Neue';
+    font-size: 8rem; color: rgba(233,69,96,0.07); line-height: 1;
+    pointer-events: none;
+  }
+
+  .skupenstvi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media(max-width: 640px) { .skupenstvi-grid { grid-template-columns: 1fr; } }
+
+  .skup-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .skup-card:hover { transform: translateY(-6px); }
+  .skup-card.solid { border-top: 3px solid #8B4513; }
+  .skup-card.liquid { border-top: 3px solid var(--blue); }
+  .skup-card.gas { border-top: 3px solid var(--green); }
+
+  .skup-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .skup-title {
+    font-family: 'Bebas Neue'; font-size: 1.6rem;
+    margin-bottom: 0.75rem; letter-spacing: 0.05em;
+  }
+  .skup-examples {
+    color: var(--muted); font-size: 0.9rem; line-height: 1.7; font-weight: 300;
+  }
+
+  /* ── TRIANGLE ── */
+  #trojuhelnik { background: var(--mid); margin: 0; max-width: 100%; padding: 6rem 2rem; }
+  #trojuhelnik > div { max-width: 1100px; margin: 0 auto; }
+
+  .triangle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  @media(max-width:640px) { .triangle-grid { grid-template-columns: 1fr; } }
+
+  .tri-card {
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .tri-card:hover { transform: scale(1.02); }
+  .tri-card.fire-card { background: linear-gradient(135deg, #4A0E0E, #2A0808); border: 1px solid rgba(231,76,60,0.3); }
+  .tri-card.air-card  { background: linear-gradient(135deg, #0A2A4A, #081A30); border: 1px solid rgba(52,152,219,0.3); }
+  .tri-card.heat-card { background: linear-gradient(135deg, #3D2000, #251400); border: 1px solid rgba(243,156,18,0.3); }
+
+  .tri-num {
+    position: absolute; top: 1rem; right: 1.2rem;
+    font-family: 'Bebas Neue'; font-size: 5rem; line-height: 1;
+    opacity: 0.07;
+  }
+  .tri-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+  .tri-name {
+    font-family: 'Bebas Neue'; font-size: 1.8rem; letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .fire-card .tri-name { color: #E74C3C; }
+  .air-card  .tri-name { color: #3498DB; }
+  .heat-card .tri-name { color: #F39C12; }
+  .tri-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; font-weight: 300; }
+
+  .tri-result {
+    background: var(--fire);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .tri-result-text {
+    font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.08em;
+  }
+  .tri-result-note {
+    font-size: 0.9rem; font-weight: 300; opacity: 0.9;
+    max-width: 500px; line-height: 1.5;
+  }
+
+  /* ── TŘÍDY ── */
+  .tridy-table {
+    width: 100%; border-collapse: collapse;
+    border-radius: 16px; overflow: hidden;
+  }
+  .tridy-table th {
+    background: var(--surface);
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .tridy-table td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.95rem;
+    vertical-align: middle;
+  }
+  .tridy-table tr:last-child td { border-bottom: none; }
+  .tridy-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .row-1 { background: rgba(231,76,60,0.08); }
+  .row-2 { background: rgba(243,156,18,0.06); }
+  .row-3 { background: rgba(46,204,113,0.06); }
+
+  .trida-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .b-red   { background: rgba(231,76,60,0.2);  color: #E74C3C; border: 1px solid rgba(231,76,60,0.3); }
+  .b-amber { background: rgba(243,156,18,0.2); color: #F39C12; border: 1px solid rgba(243,156,18,0.3); }
+  .b-green { background: rgba(46,204,113,0.2); color: #2ECC71; border: 1px solid rgba(46,204,113,0.3); }
+
+  .temp-big {
+    font-family: 'Bebas Neue'; font-size: 1.8rem; letter-spacing: 0.03em;
+  }
+  .t-red { color: #E74C3C; }
+  .t-amber { color: #F39C12; }
+  .t-green { color: #2ECC71; }
+
+  /* ── SYMBOLY ── */
+  #symboly { background: var(--mid); margin: 0; max-width: 100%; padding: 6rem 2rem; }
+  #symboly > div { max-width: 1100px; margin: 0 auto; }
+
+  .sym-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  @media(max-width:640px) { .sym-grid { grid-template-columns: 1fr; } }
+
+  .sym-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 1.75rem;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .sym-card:hover { transform: translateX(6px); }
+  .sym-card.s-fire  { border-left: 3px solid #E74C3C; }
+  .sym-card.s-boom  { border-left: 3px solid #E67E22; }
+  .sym-card.s-skull { border-left: 3px solid #9B59B6; }
+  .sym-card.s-warn  { border-left: 3px solid #F39C12; }
+
+  .sym-icon-wrap {
+    width: 70px; height: 70px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem;
+  }
+  .s-fire  .sym-icon-wrap { background: rgba(231,76,60,0.15); }
+  .s-boom  .sym-icon-wrap { background: rgba(230,126,34,0.15); }
+  .s-skull .sym-icon-wrap { background: rgba(155,89,182,0.15); }
+  .s-warn  .sym-icon-wrap { background: rgba(243,156,18,0.15); }
+
+  .sym-name {
+    font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .s-fire  .sym-name { color: #E74C3C; }
+  .s-boom  .sym-name { color: #E67E22; }
+  .s-skull .sym-name { color: #9B59B6; }
+  .s-warn  .sym-name { color: #F39C12; }
+
+  .sym-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.5; font-weight: 300; }
+
+  /* ── BEZPEČNOST ── */
+  .bezp-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  @media(max-width:640px) { .bezp-cols { grid-template-columns: 1fr; } }
+
+  .bezp-col-title {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Bebas Neue'; font-size: 1.6rem; letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .bezp-col-title.green { color: var(--green); }
+  .bezp-col-title.red   { color: var(--red); }
+  .bezp-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .bezp-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .bezp-dot.red   { background: var(--red);   box-shadow: 0 0 8px var(--red); }
+
+  .bezp-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.95rem; line-height: 1.5; font-weight: 300;
+    transition: padding-left 0.2s;
+  }
+  .bezp-item:hover { padding-left: 6px; }
+  .bezp-item:last-child { border-bottom: none; }
+  .bezp-mark { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── HAŠENÍ ── */
+  #haseni { background: var(--mid); margin: 0; max-width: 100%; padding: 6rem 2rem; }
+  #haseni > div { max-width: 1100px; margin: 0 auto; }
+
+  .haseni-warning {
+    background: rgba(233,69,96,0.12);
+    border: 1px solid rgba(233,69,96,0.4);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+    display: flex; gap: 1rem; align-items: center;
+    font-size: 1.05rem; line-height: 1.5;
+  }
+  .warning-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .warning-strong { font-weight: 600; color: var(--fire); }
+
+  .haseni-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media(max-width:640px) { .haseni-grid { grid-template-columns: 1fr; } }
+
+  .has-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  .has-card:hover { transform: translateY(-6px); }
+  .has-card.h-blue { border-top: 3px solid var(--blue); }
+  .has-card.h-amber { border-top: 3px solid var(--yellow); }
+  .has-card.h-green { border-top: 3px solid var(--green); }
+
+  .has-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .has-name { font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  .h-blue  .has-name { color: var(--blue); }
+  .h-amber .has-name { color: var(--yellow); }
+  .h-green .has-name { color: var(--green); }
+  .has-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; font-weight: 300; }
+  .has-note {
+    margin-top: 1rem; padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.8rem; font-style: italic;
+  }
+  .h-blue .has-note { color: var(--blue); }
+  .h-amber .has-note { color: var(--yellow); }
+  .h-green .has-note { color: var(--green); }
+
+  /* ── SHRNUTÍ / QUIZ ── */
+  #shrnutí { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .summary-list {
+    display: flex; flex-direction: column; gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  .sum-item {
+    display: flex; align-items: center; gap: 1.5rem;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.25rem 1.75rem;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .sum-item:hover { border-color: var(--fire); transform: translateX(4px); }
+  .sum-num {
+    font-family: 'Bebas Neue'; font-size: 2rem;
+    min-width: 36px; text-align: center;
+  }
+  .sum-text { font-size: 0.95rem; line-height: 1.6; font-weight: 300; }
+
+  /* ── QUIZ ── */
+  .quiz-wrapper {
+    background: var(--surface);
+    border: 1px solid rgba(233,69,96,0.2);
+    border-radius: 20px;
+    padding: 2.5rem;
+  }
+  .quiz-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .quiz-title {
+    font-family: 'Bebas Neue'; font-size: 2rem; letter-spacing: 0.05em;
+  }
+  .quiz-progress {
+    font-size: 0.85rem; color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .qprog-bar { width: 120px; height: 4px; background: var(--card); border-radius: 4px; }
+  .qprog-fill { height: 4px; background: var(--fire); border-radius: 4px; transition: width 0.4s; }
+
+  .quiz-question {
+    font-size: 1.15rem; font-weight: 400; margin-bottom: 1.75rem; line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+  .quiz-opt {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    text-align: left;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .quiz-opt:hover:not(:disabled) {
+    background: var(--surface);
+    border-color: var(--fire);
+    transform: translateX(4px);
+  }
+  .quiz-opt.correct  { background: rgba(46,204,113,0.15); border-color: var(--green); color: var(--green); }
+  .quiz-opt.wrong    { background: rgba(231,76,60,0.15);  border-color: var(--red);   color: var(--red); }
+  .quiz-opt.disabled { cursor: default; opacity: 0.6; }
+
+  .quiz-feedback {
+    min-height: 2rem;
+    font-size: 0.95rem; line-height: 1.5;
+    border-radius: 8px; padding: 0.75rem 1rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok  { background: rgba(46,204,113,0.1); color: var(--green); }
+  .quiz-feedback.bad { background: rgba(231,76,60,0.1); color: var(--red); }
+
+  .quiz-next {
+    margin-top: 1.25rem;
+    background: var(--fire); border: none; color: white;
+    font-family: 'Bebas Neue'; font-size: 1.1rem; letter-spacing: 0.08em;
+    padding: 10px 30px; border-radius: 8px; cursor: pointer;
+    display: none; transition: opacity 0.2s;
+  }
+  .quiz-next:hover { opacity: 0.85; }
+  .quiz-next.show { display: inline-block; }
+
+  .quiz-score {
+    text-align: center; padding: 2rem;
+    display: none;
+  }
+  .quiz-score.show { display: block; }
+  .score-num {
+    font-family: 'Bebas Neue'; font-size: 5rem; color: var(--fire); line-height: 1;
+  }
+  .score-label { color: var(--muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-weight: 300; }
+  .quiz-restart {
+    background: transparent; border: 1px solid var(--fire); color: var(--fire);
+    font-family: 'Bebas Neue'; font-size: 1.1rem; letter-spacing: 0.08em;
+    padding: 10px 30px; border-radius: 8px; cursor: pointer;
+    transition: all 0.25s;
+  }
+  .quiz-restart:hover { background: var(--fire); color: white; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.3s, backdrop-filter 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(13,13,26,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 0.1em;
+    color: var(--fire); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.85rem;
+    transition: color 0.2s; letter-spacing: 0.05em;
+  }
+  .nav-links a:hover { color: var(--text); }
+  @media(max-width:500px) { .nav-links { display: none; } }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 300;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#">🔥 Hořlaviny</a>
+  <div class="nav-links">
+    <a href="#co-je">Základy</a>
+    <a href="#trojuhelnik">Trojúhelník</a>
+    <a href="#tridy">Třídy</a>
+    <a href="#symboly">Symboly</a>
+    <a href="#bezpecnost">Bezpečnost</a>
+    <a href="#shrnutí">Quiz</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="fire-grid"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="hero-badge">Přírodopis & Chemie · 8. třída</div>
+  <h1 class="hero-title">
+    Hořla<span>viny</span>
+  </h1>
+  <p class="hero-sub">Vše podstatné, co musí znát každý žák osmé třídy – od trojúhelníku hoření po bezpečné hašení.</p>
+  <div class="hero-pills">
+    <a class="hero-pill" href="#co-je">Co je hořlavina</a>
+    <a class="hero-pill" href="#trojuhelnik">Trojúhelník hoření</a>
+    <a class="hero-pill" href="#tridy">Třídy nebezpečnosti</a>
+    <a class="hero-pill" href="#symboly">Symboly GHS</a>
+    <a class="hero-pill" href="#bezpecnost">Bezpečnost</a>
+    <a class="hero-pill" href="#shrnutí">🎯 Vyzkoušej se</a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</div>
+
+<!-- CO JE HOŘLAVINA -->
+<section id="co-je">
+  <p class="section-label">01 — Definice</p>
+  <h2 class="section-title reveal">Co je hořlavina?</h2>
+  <p class="section-desc reveal">Hořlaviny jsou všude kolem nás. Znát jejich vlastnosti je základ bezpečnosti.</p>
+
+  <div class="def-card reveal">
+    Hořlavina je látka, která se může <strong>vznítit a hořet</strong> za přítomnosti kyslíku a zdroje tepla. Setkáme se s nimi ve všech třech skupenstvích.
+  </div>
+
+  <div class="skupenstvi-grid">
+    <div class="skup-card solid reveal">
+      <div class="skup-icon">🪵</div>
+      <div class="skup-title">Pevné</div>
+      <div class="skup-examples">Dřevo · Papír · Uhlí · Textil · Seno</div>
+    </div>
+    <div class="skup-card liquid reveal">
+      <div class="skup-icon">🧴</div>
+      <div class="skup-title">Kapalné</div>
+      <div class="skup-examples">Benzín · Nafta · Líh · Aceton · Terpentýn</div>
+    </div>
+    <div class="skup-card gas reveal">
+      <div class="skup-icon">💨</div>
+      <div class="skup-title">Plynné</div>
+      <div class="skup-examples">Zemní plyn · Propan-butan · Vodík · Acetylen</div>
+    </div>
+  </div>
+</section>
+
+<!-- TROJÚHELNÍK -->
+<section id="trojuhelnik" style="background:var(--mid); max-width:100%; padding: 6rem 2rem;">
+<div style="max-width:1100px; margin:0 auto;">
+  <p class="section-label">02 — Trojúhelník hoření</p>
+  <h2 class="section-title reveal">Tři podmínky ohně</h2>
+  <p class="section-desc reveal">Aby mohl vzniknout oheň, musí být splněny <strong>všechny tři podmínky zároveň</strong>. Odstraň jednu – oheň zhasne.</p>
+
+  <div class="triangle-grid">
+    <div class="tri-card fire-card reveal">
+      <div class="tri-num">1</div>
+      <div class="tri-icon">🔥</div>
+      <div class="tri-name">Hořlavá látka</div>
+      <div class="tri-desc">Palivo, které hoří – dřevo, benzín, plyn, textil... Bez paliva oheň nevznikne.</div>
+    </div>
+    <div class="tri-card air-card reveal">
+      <div class="tri-num">2</div>
+      <div class="tri-icon">💨</div>
+      <div class="tri-name">Kyslík</div>
+      <div class="tri-desc">Ze vzduchu – minimálně 15 % obsahu. Proto hašení dekou funguje – odejme kyslík.</div>
+    </div>
+    <div class="tri-card heat-card reveal">
+      <div class="tri-num">3</div>
+      <div class="tri-icon">🌡️</div>
+      <div class="tri-name">Teplo</div>
+      <div class="tri-desc">Zdroj zapálení – plamen, jiskra, přehřátý povrch. Musí překonat bod vznícení.</div>
+    </div>
+  </div>
+
+  <div class="tri-result reveal">
+    <div class="tri-result-text">🔥 &nbsp; Hořlavina + Kyslík + Teplo = OHEŇ</div>
+    <div class="tri-result-note">Princip hašení: odeber JEDNU podmínku. Pěna odejme kyslík, voda snižuje teplotu, oddálení paliva – a oheň zhasne.</div>
+  </div>
+</div>
+</section>
+
+<!-- TŘÍDY -->
+<section id="tridy">
+  <p class="section-label">03 — Klasifikace</p>
+  <h2 class="section-title reveal">Třídy nebezpečnosti</h2>
+  <p class="section-desc reveal">Kapalné hořlaviny se třídí podle <strong>bodu vzplanutí</strong> – teploty, při níž vzniknou páry schopné vzplanutí.</p>
+
+  <div class="reveal" style="overflow-x:auto;">
+  <table class="tridy-table">
+    <thead>
+      <tr>
+        <th>Třída</th>
+        <th>Bod vzplanutí</th>
+        <th>Nebezpečnost</th>
+        <th>Příklady látek</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-1">
+        <td><span class="trida-badge b-red">I. třída</span></td>
+        <td><span class="temp-big t-red">do 21 °C</span></td>
+        <td style="color:#E74C3C; font-weight:600;">⚠ Extrémně nebezpečné</td>
+        <td style="color:var(--muted)">Benzín, aceton, ether, líh</td>
+      </tr>
+      <tr class="row-2">
+        <td><span class="trida-badge b-amber">II. třída</span></td>
+        <td><span class="temp-big t-amber">21 – 55 °C</span></td>
+        <td style="color:#F39C12; font-weight:600;">⚡ Nebezpečné</td>
+        <td style="color:var(--muted)">Nafta, terpentýn, petrolej</td>
+      </tr>
+      <tr class="row-3">
+        <td><span class="trida-badge b-green">III. třída</span></td>
+        <td><span class="temp-big t-green">55 – 100 °C</span></td>
+        <td style="color:#2ECC71; font-weight:600;">✓ Méně nebezpečné</td>
+        <td style="color:var(--muted)">Motorové oleje, maziva</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="def-card reveal" style="margin-top:2rem; border-left-color: var(--ember);">
+    <strong>Pamatuj:</strong> Čím <em>nižší</em> bod vzplanutí, tím <em>větší</em> nebezpečí. Benzín vzplane již při pokojové teplotě – proto se s ním zachází s největší opatrností.
+  </div>
+</section>
+
+<!-- SYMBOLY -->
+<section id="symboly" style="background:var(--mid); max-width:100%; padding: 6rem 2rem;">
+<div style="max-width:1100px; margin:0 auto;">
+  <p class="section-label">04 — Označování</p>
+  <h2 class="section-title reveal">Symboly GHS</h2>
+  <p class="section-desc reveal">Globálně harmonizovaný systém označování chemikálií. Tyto symboly najdeš na každém obalu nebezpečné látky.</p>
+
+  <div class="sym-grid">
+    <div class="sym-card s-fire reveal">
+      <div class="sym-icon-wrap">🔥</div>
+      <div>
+        <div class="sym-name">Plamen</div>
+        <div class="sym-desc">Hořlavá nebo samovznětlivá látka. Chránit před teplem, jiskrami a otevřeným ohněm. Nekouřit.</div>
+      </div>
+    </div>
+    <div class="sym-card s-boom reveal">
+      <div class="sym-icon-wrap">💥</div>
+      <div>
+        <div class="sym-name">Výbuch</div>
+        <div class="sym-desc">Výbušná nebo extrémně hořlavá látka. Může explodovat při nárazu, tření nebo ohřevu.</div>
+      </div>
+    </div>
+    <div class="sym-card s-skull reveal">
+      <div class="sym-icon-wrap">☠️</div>
+      <div>
+        <div class="sym-name">Lebka</div>
+        <div class="sym-desc">Akutně toxická látka. Smrtelně nebezpečná při požití, vdechnutí nebo kontaktu s kůží.</div>
+      </div>
+    </div>
+    <div class="sym-card s-warn reveal">
+      <div class="sym-icon-wrap">⚠️</div>
+      <div>
+        <div class="sym-name">Varování</div>
+        <div class="sym-desc">Dráždivá nebo škodlivá látka. Může dráždit kůži, oči nebo dýchací cesty.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- BEZPEČNOST -->
+<section id="bezpecnost">
+  <p class="section-label">05 — Bezpečnost</p>
+  <h2 class="section-title reveal">Jak bezpečně zacházet</h2>
+  <p class="section-desc reveal">Správné zacházení s hořlavinami dokáže předejít požárům, výbuchům i ekologickým škodám.</p>
+
+  <div class="bezp-cols">
+    <div class="reveal">
+      <div class="bezp-col-title green">
+        <div class="bezp-dot green"></div>
+        Smíš
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--green)">✓</span>
+        Uchovávat v označených, <strong>uzavřených</strong> nádobách
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--green)">✓</span>
+        Manipulovat mimo dosah ohně, jisker a elektrostatiky
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--green)">✓</span>
+        Pracovat na <strong>dobře větraném</strong> místě
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--green)">✓</span>
+        Po použití nádoby <strong>ihned uzavřít</strong>
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--green)">✓</span>
+        Skladovat v chladu, temnu, mimo dosah dětí
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="bezp-col-title red">
+        <div class="bezp-dot red"></div>
+        Nesmíš
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--red)">✗</span>
+        Přelévat u otevřeného ohně nebo blízko jisker
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--red)">✗</span>
+        Skladovat u topidel, na přímém slunci nebo ve voze
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--red)">✗</span>
+        <span>Vylévat do kanalizace – hrozí <strong>výbuch</strong> a ekologická závada</span>
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--red)">✗</span>
+        Mísit neznámé hořlaviny bez znalosti jejich reakce
+      </div>
+      <div class="bezp-item">
+        <span class="bezp-mark" style="color:var(--red)">✗</span>
+        Pracovat bez větrání – páry tvoří výbušnou směs
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HAŠENÍ -->
+<section id="haseni" style="background:var(--mid); max-width:100%; padding: 6rem 2rem;">
+<div style="max-width:1100px; margin:0 auto;">
+  <p class="section-label">06 — Hašení</p>
+  <h2 class="section-title reveal">Jak správně hasit?</h2>
+
+  <div class="haseni-warning reveal">
+    <div class="warning-icon">🚫</div>
+    <div>
+      <span class="warning-strong">NIKDY nehaste hořící kapalinu vodou!</span>
+      &nbsp;Voda způsobí rozstříknutí hořící látky do okolí a dramaticky rozšíří požár.
+    </div>
+  </div>
+
+  <div class="haseni-grid">
+    <div class="has-card h-blue reveal">
+      <div class="has-icon">🧯</div>
+      <div class="has-name">Hasicí přístroj</div>
+      <div class="has-desc">Pěnový nebo práškový pro hořlavé kapaliny. Namíř na základnu plamene a pohybuj ze strany na stranu.</div>
+      <div class="has-note">CO₂ přístroj pro elektrická zařízení</div>
+    </div>
+    <div class="has-card h-amber reveal">
+      <div class="has-icon">🏖️</div>
+      <div class="has-name">Písek</div>
+      <div class="has-desc">Přihrne k ohni a udusí plamen – odebere kyslík. Měl by být v každé dílně a garáži.</div>
+      <div class="has-note">Vždy v kbelíku u nebezpečných pracovišť</div>
+    </div>
+    <div class="has-card h-green reveal">
+      <div class="has-icon">🛏️</div>
+      <div class="has-name">Hasicí deka</div>
+      <div class="has-desc">Přehodit přes hořící předmět nebo osobu. Odejme kyslík a udusí plamen bez rozstříkání.</div>
+      <div class="has-note">Ideální pro malé požáry a oděvy</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SHRNUTÍ + QUIZ -->
+<section id="shrnutí">
+  <p class="section-label">07 — Shrnutí</p>
+  <h2 class="section-title reveal">Klíčové pojmy</h2>
+
+  <div class="summary-list">
+    <div class="sum-item reveal">
+      <div class="sum-num" style="color:var(--fire)">1</div>
+      <div class="sum-text"><strong>Trojúhelník hoření:</strong> hořlavina + kyslík + teplo → bez jednoho oheň nevznikne ani nepřežije.</div>
+    </div>
+    <div class="sum-item reveal">
+      <div class="sum-num" style="color:var(--ember)">2</div>
+      <div class="sum-text"><strong>Bod vzplanutí</strong> určuje třídu nebezpečnosti: I. třída (do 21 °C) je nejnebezpečnější, III. třída (55–100 °C) nejméně.</div>
+    </div>
+    <div class="sum-item reveal">
+      <div class="sum-num" style="color:#9B59B6">3</div>
+      <div class="sum-text"><strong>Symboly GHS:</strong> plamen = hořlavé, výbuch = extrémně nebezpečné, lebka = toxické, varování = dráždivé.</div>
+    </div>
+    <div class="sum-item reveal">
+      <div class="sum-num" style="color:var(--green)">4</div>
+      <div class="sum-text"><strong>Bezpečnost:</strong> uzavřené nádoby, větrání, mimo dosah ohně, nesmíš lít do kanalizace.</div>
+    </div>
+    <div class="sum-item reveal">
+      <div class="sum-num" style="color:var(--blue)">5</div>
+      <div class="sum-text"><strong>Hašení:</strong> NIKDY vodou! Pěnový/práškový přístroj, písek nebo hasicí deka – vše odebírá kyslík.</div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-wrapper reveal">
+    <div id="quiz-main">
+      <div class="quiz-header">
+        <div class="quiz-title">🎯 Otestuj se</div>
+        <div class="quiz-progress">
+          <span id="q-counter">1 / 8</span>
+          <div class="qprog-bar"><div class="qprog-fill" id="q-prog" style="width:12%"></div></div>
+        </div>
+      </div>
+      <div class="quiz-question" id="q-text"></div>
+      <div class="quiz-options" id="q-opts"></div>
+      <div class="quiz-feedback" id="q-feedback"></div>
+      <button class="quiz-next" id="q-next" onclick="nextQuestion()">Další otázka →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-num"></div>
+      <div class="score-label" id="score-label"></div>
+      <button class="quiz-restart" onclick="startQuiz()">Znovu</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Hořlaviny · Přírodopis & Chemie · 8. třída &nbsp;·&nbsp; Vždy dodržuj bezpečnostní pravidla 🔥
+</footer>
+
+<script>
+// Particles
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.style.cssText=`left:${Math.random()*100}%;bottom:${Math.random()*20}%;--dur:${4+Math.random()*8}s;--delay:${Math.random()*6}s;--drift:${(Math.random()-0.5)*100}px`;
+    c.appendChild(p);
+  }
+})();
+
+// Nav scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Quiz
+const questions = [
+  { q:"Co je trojúhelník hoření?", opts:["Hořlavina + kyslík + teplo","Hořlavina + voda + vzduch","Oheň + plamen + kouř","Kyslík + dusík + teplo"], ans:0, exp:"Správně! Bez jediné z těchto tří podmínek oheň nevznikne." },
+  { q:"Do jaké třídy patří benzín?", opts:["III. třída","II. třída","I. třída","Není klasifikován"], ans:2, exp:"Správně! Benzín patří do I. třídy – bod vzplanutí má pod 21 °C, takže vzplane i za pokojové teploty." },
+  { q:"Proč NESMÍME hasit hořící kapalinu vodou?", opts:["Voda kapalinu ochladí příliš rychle","Voda rozstříkne hořící kapalinu a rozšíří požár","Voda s hořlavinou vytváří jedovatý plyn","Voda je příliš drahá"], ans:1, exp:"Správně! Voda způsobí rozprsknutí hořící kapaliny do okolí a dramaticky rozšíří požár." },
+  { q:"Co znamená symbol plamene (GHS) na obalu?", opts:["Látka je toxická","Látka je výbušná","Látka je hořlavá nebo samovznětlivá","Látka je radioaktivní"], ans:2, exp:"Správně! Plamen = hořlavá nebo samovznětlivá látka. Chraň před teplem a ohněm." },
+  { q:"Jaký je bod vzplanutí pro II. třídu hořlavých kapalin?", opts:["Do 21 °C","21–55 °C","55–100 °C","Nad 100 °C"], ans:1, exp:"Správně! II. třída má bod vzplanutí 21–55 °C. Patří sem nafta nebo terpentýn." },
+  { q:"Jak správně udusit malý požár?", opts:["Zalít vodou","Přihodit dřevo, aby shořelo rychleji","Přehodit hasicí deku nebo zasypat pískem","Otevřít okno pro přívod vzduchu"], ans:2, exp:"Správně! Deka nebo písek odeberou kyslík – a bez kyslíku oheň nemůže hořet." },
+  { q:"Proč se hořlaviny nesmí vylévat do kanalizace?", opts:["Jen kvůli ekologické závadě","Páry se šíří potrubím a mohou způsobit výbuch, navíc jde o ekologickou závadu","Protože jsou příliš husté","Je to drahé"], ans:1, exp:"Správně! Obojí – hrozí výbuch par v potrubí a zároveň vážné znečištění životního prostředí." },
+  { q:"Co je bod vznícení (na rozdíl od bodu vzplanutí)?", opts:["Teplota, při níž se látka sama vznítí bez vnějšího zdroje","Teplota varu hořlavé kapaliny","Teplota, při níž páry vzplanou od vnějšího plamene","Teplota okolního vzduchu při požáru"], ans:0, exp:"Správně! Bod vznícení = látka se sama vznítí bez vnějšího plamene. Bod vzplanutí jen vytvoří zápalné páry, ale potřebuje vnější zdroj." },
+];
+
+let qi=0, score=0, answered=false;
+
+function startQuiz(){
+  qi=0; score=0; answered=false;
+  document.getElementById('quiz-main').style.display='block';
+  document.getElementById('quiz-score').classList.remove('show');
+  showQuestion();
+}
+
+function showQuestion(){
+  answered=false;
+  const q=questions[qi];
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-counter').textContent=`${qi+1} / ${questions.length}`;
+  document.getElementById('q-prog').style.width=`${(qi/questions.length)*100}%`;
+  const fb=document.getElementById('q-feedback');
+  fb.classList.remove('show','ok','bad'); fb.textContent='';
+  document.getElementById('q-next').classList.remove('show');
+
+  const opts=document.getElementById('q-opts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='quiz-opt';
+    b.textContent=o;
+    b.onclick=()=>answer(i);
+    opts.appendChild(b);
+  });
+}
+
+function answer(i){
+  if(answered) return;
+  answered=true;
+  const q=questions[qi];
+  const btns=document.querySelectorAll('.quiz-opt');
+  btns.forEach(b=>b.classList.add('disabled'));
+  btns[i].classList.add(i===q.ans?'correct':'wrong');
+  if(i!==q.ans) btns[q.ans].classList.add('correct');
+
+  const fb=document.getElementById('q-feedback');
+  fb.classList.add('show', i===q.ans?'ok':'bad');
+  fb.textContent=i===q.ans?'✓ '+q.exp:'✗ Špatně. '+q.exp;
+  if(i===q.ans) score++;
+  document.getElementById('q-next').classList.add('show');
+  document.getElementById('q-next').textContent=qi<questions.length-1?'Další otázka →':'Zobrazit výsledek';
+}
+
+function nextQuestion(){
+  qi++;
+  if(qi>=questions.length){
+    document.getElementById('quiz-main').style.display='none';
+    const sc=document.getElementById('quiz-score');
+    sc.classList.add('show');
+    document.getElementById('score-num').textContent=`${score}/${questions.length}`;
+    const pct=Math.round(score/questions.length*100);
+    document.getElementById('score-label').textContent=
+      pct>=88?'Výborně! Látku perfektně ovládáš. 🎉':
+      pct>=63?'Dobrý výsledek! Pár věcí ještě zopakuj. 💪':
+      'Nevadí – přečti si stránku znovu a zkus to. 📚';
+  } else {
+    showQuestion();
+  }
+}
+
+startQuiz();
+</script>
+</body>
+</html>
